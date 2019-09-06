@@ -1,0 +1,37 @@
+#elevatorContainerBox{
+  position: relative;
+  align-items: center;
+  min-width:160px;
+}
+.floors p, .floors button{
+  display: none;
+}
+#elevatorBox p,#elevatorBox button
+{
+  display: none;
+}
+.floors{    
+  max-width: 200px;
+}
+.intControl button{
+  max-width: 50px;
+}
+#elevatorBox{
+  padding: 0%;
+}
+#d1,#d2{
+  width: 50%;
+  height: 100%;
+  padding: 0%;
+  margin: 0%;
+  background-color: #ccc;
+}
+#d1{
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  
+}
+#d2{
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
