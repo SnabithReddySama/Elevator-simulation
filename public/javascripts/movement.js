@@ -65,14 +65,15 @@ function elevate(to,dir,i){
     }
     else{
         state=true;
-        startCycle();
+        startCycle(false);  //starting after off state
     }
 }
 
-function startCycle()       //we calculate max and move elevator from 0 to max.
+function startCycle(first)       //we calculate max and move elevator from 0 to max.
 {
     //observer.disconnect();
-    stopper();
+    if(first==false)
+        stopper();
     state = direction = true;
     max=calculateMax(0);
     document.getElementById("eleDir").innerHTML='arrow_upward';
@@ -107,28 +108,32 @@ function calculateMin(k)
 {
     var fmin=floorCal(0);
     if(fmin>k)
-        fmin=-1;
+        return -1;
     return fmin;
 }
 function calculateMax(k)
 {
     var fmax=floorCal(1);
     if(fmax<k)
-        fmax=-1;    //no other floor above the current floor
+        return -1;    //no other floor above the current floor
     return fmax;
 }
 function floorCal(minMax)
 {
     var fmax=0;
     var fmin=fcount-1;
+    let check=false;
         for(var i=0;i<fcount;i++)
             if(floorlistd[i]==true||floorlistu[i]==true)
             {
+                check=true;
                 if(fmin>i)
                     fmin=i;
                 if(fmax<i)
                     fmax=i;
             }
+    if(check==false)
+        return -1;
     if(minMax==0)
         return fmin;
     else
@@ -147,10 +152,12 @@ function changeDir(k){
         if(pmin!=-1)      //if there is a min
         {
             min=pmin;
+            console.log("going to min from max");
             moveElevator(k,min);    //go to min
         }
         else{               //else
-            min=0;
+            min=k-1;
+            console.log("going to 0 from max");
             moveElevator(k,min);    //go to ground
         }
     }
@@ -167,7 +174,8 @@ function changeDir(k){
         }
         if(!flag)       //flag!=true indicates that there are no calls from above
         {
-            min=0;
+            min=k-1;
+            console.log("going to 0 from min");
             moveElevator(k,min);
         }
         else    //if there is atleast a call
@@ -178,10 +186,12 @@ function changeDir(k){
             if(pmin!=-1)        //go to new min if it exists
             {
                 min=pmin;
+                console.log("going to new min from min");
                 moveElevator(k,min);
             }
             else if(pup!=-1)    //go to max if there is one
             {
+                console.log("going to max from min");
                 max=pup;
                 direction=true;
                 document.getElementById("eleDir").innerHTML='arrow_upward';
@@ -189,7 +199,8 @@ function changeDir(k){
             }
             else                //go ground if there is none
             {
-                min=0;
+                console.log("going to ground from min");
+                min=k-1;
                 moveElevator(k,min);
             }
         }
@@ -207,7 +218,8 @@ function changeDir(k){
         }
         if(flag==true)        //  if there is any call
         {
-            startCycle();
+            console.log("at ground starting cycle");
+            startCycle(true);   //call in a non idle state
         }
         else
         {
@@ -282,7 +294,7 @@ async function stopper(){
                         $("#elevatorBox").resume();
                         
                         tmin=min;
-                        if((k==min))
+                        if((k==min)&&(k>0))
                         {
                             tmin=calculateMin(min);
                             if(tmin!=-1)
@@ -293,6 +305,11 @@ async function stopper(){
                             else
                                 changeDir(k);       //change direction at min
                         }
+                    }
+                    else if(k>0&&(direction==false)&&(floorlistd[k]==false&&floorlistu[k]==false))
+                    {
+                        if(k==min)
+                            changeDir(k);
                     }
                     if(k == 0&&(!direction)){
                         console.log("in c3"+k);
