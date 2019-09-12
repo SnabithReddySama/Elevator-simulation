@@ -8,7 +8,6 @@ var max = 0;
 var min=0;
 var state = false;          // idile or active state.
 var observer;
-
 function setfloorcount(){
     let k = parseInt(document.URL.split('floor=')[1]);
     if(!isNaN(k))
@@ -262,7 +261,7 @@ async function stopper(){
                         floorlistu[k] =floorlistd[k]= false;
                         
                         $("#elevatorBox").pause();
-                        doorsOpen();
+                        doorsOpen(k);
                         await syncdelay(6000);
                         $("#elevatorBox").resume();
                         tmax=max;
@@ -289,7 +288,7 @@ async function stopper(){
                         floorlistd[k] = floorlistu[k] = false;
                         
                         $("#elevatorBox").pause();
-                        doorsOpen();
+                        doorsOpen(k);
                         await syncdelay(6000);
                         $("#elevatorBox").resume();
                         
@@ -325,9 +324,8 @@ async function stopper(){
     observer.observe(targetNode, config);
 }
 
-async function doorsOpen(){
-    //var audio = new Audio('javascripts\\p.mp3');
-    //audio.play();
+async function doorsOpen(floor){
+    speechSynthesis.speak(new SpeechSynthesisUtterance('floor number '+floor));
     $('#d1').hide('slide', {direction: 'left'}, 1000);
     $('#d2').hide('slide', {direction: 'right'}, 1000);
     await syncdelay(5000);
